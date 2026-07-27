@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCCB Lead CRM — Workflow, Scripts &amp; Compliance</title>
+<style>
+  :root{
+    --navy:#1F4E79;
+    --ltblue:#D9E2F3;
+    --alt:#EEF2FA;
+    --red:#EE0000;
+    --grey:#555555;
+    --ink:#1c2b3a;
+    --line:#c9d6ea;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family: Verdana, Arial, sans-serif;
+    color:var(--ink);
+    background:#f7f9fc;
+    display:flex;
+    min-height:100vh;
+  }
+  a{color:var(--navy);}
+
+  nav{
+    width:230px;
+    flex-shrink:0;
+    background:var(--navy);
+    color:#fff;
+    padding:26px 18px;
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow-y:auto;
+  }
+  nav .brand{
+    font-size:14.5px;
+    font-weight:bold;
+    letter-spacing:0.03em;
+    border-bottom:1px solid rgba(255,255,255,0.25);
+    padding-bottom:14px;
+    margin-bottom:16px;
+  }
+  nav .brand small{
+    display:block;
+    font-weight:normal;
+    color:var(--ltblue);
+    font-size:11px;
+    margin-top:4px;
+  }
+  nav .tabbtn{
+    display:block;
+    width:100%;
+    text-align:left;
+    background:none;
+    border:none;
+    color:#e8eefc;
+    font-family:Verdana, Arial, sans-serif;
+    font-size:13px;
+    padding:9px 10px;
+    border-radius:4px;
+    cursor:pointer;
+    margin-bottom:2px;
+  }
+  nav .tabbtn:hover{background:rgba(255,255,255,0.12);}
+  nav .tabbtn.active{background:#fff;color:var(--navy);font-weight:bold;}
+  nav .source-link{
+    display:block;
+    margin-top:20px;
+    padding:9px 10px;
+    background:rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.3);
+    border-radius:4px;
+    color:#fff;
+    text-decoration:none;
+    font-size:12px;
+    text-align:center;
+  }
+  nav .source-link:hover{background:rgba(255,255,255,0.2);}
+
+  main{
+    flex:1;
+    padding:36px 52px 100px 52px;
+    max-width:960px;
+  }
+  h1{color:var(--navy);font-size:24px;margin:0 0 4px 0;}
+  .subtitle{color:var(--grey);font-style:italic;font-size:13px;margin-bottom:28px;}
+  .panel{display:none;}
+  .panel.active{display:block;}
+  section{margin-bottom:40px;}
+  section h2{
+    color:var(--navy);
+    font-size:17px;
+    border-bottom:2px solid var(--ltblue);
+    padding-bottom:8px;
+    margin-bottom:14px;
+  }
+  section h3{color:var(--navy);font-size:14px;margin:18px 0 6px 0;}
+  p{line-height:1.6;font-size:13.5px;}
+  ul,ol{line-height:1.7;font-size:13.5px;}
+  .getstarted{
+    background:var(--alt);
+    border-left:4px solid var(--navy);
+    padding:12px 18px;
+    border-radius:0 4px 4px 0;
+    font-size:13px;
+    margin-bottom:26px;
+  }
+  .toc{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:16px 22px;
+    margin-bottom:10px;
+  }
+  .toc ul{margin:0;padding-left:18px;}
+  .toc li{margin-bottom:6px;}
+  .toc a{text-decoration:none;font-size:13.5px;}
+  .toc a:hover{text-decoration:underline;}
+  .feature-card{
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:16px 20px;
+    margin-bottom:16px;
+    background:#fff;
+  }
+  .feature-card h3{margin-top:0;}
+  code.inline{
+    background:var(--alt);
+    border:1px solid var(--line);
+    padding:1px 5px;
+    border-radius:3px;
+    font-family: Consolas, Menlo, monospace;
+    font-size:12px;
+  }
+  table{border-collapse:collapse;width:100%;font-size:12.5px;margin:12px 0 24px 0;}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top;}
+  th{background:var(--navy);color:#fff;font-size:11.5px;}
+  tr:nth-child(even){background:var(--alt);}
+
+  /* Glossary */
+  dl.glossary dt{font-weight:bold;color:var(--navy);font-size:13.5px;margin-top:14px;}
+  dl.glossary dd{margin:2px 0 0 0;font-size:13px;line-height:1.55;}
+
+  /* Call scripts */
+  .subtabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+  .subtabbtn{
+    background:var(--alt);
+    border:1px solid var(--line);
+    color:var(--navy);
+    font-family:Verdana, Arial, sans-serif;
+    font-size:12.5px;
+    padding:7px 14px;
+    border-radius:16px;
+    cursor:pointer;
+  }
+  .subtabbtn.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+  .subpanel{display:none;}
+  .subpanel.active{display:block;}
+  .script-block{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:18px 22px;
+    margin-bottom:16px;
+  }
+  .script-block h4{
+    color:var(--navy);
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+    margin:0 0 8px 0;
+    border-bottom:1px solid var(--ltblue);
+    padding-bottom:6px;
+  }
+  .script-line{font-size:13.5px;line-height:1.65;font-style:italic;color:var(--ink);}
+  .consent-box{
+    background:#fff8e6;
+    border-left:4px solid #b8860b;
+    padding:12px 18px;
+    border-radius:0 4px 4px 0;
+    font-size:13px;
+    margin:14px 0;
+  }
+  .consent-box b{color:#8a6500;}
+  .warn{
+    background:#fff4f4;
+    border-left:4px solid var(--red);
+    padding:12px 18px;
+    border-radius:0 4px 4px 0;
+    font-size:13px;
+    margin:14px 0;
+  }
+  .legal-note{
+    background:var(--alt);
+    border:1px dashed var(--line);
+    padding:10px 16px;
+    border-radius:4px;
+    font-size:12px;
+    color:var(--grey);
+    margin-top:26px;
+  }
+  footer{color:var(--grey);font-size:11.5px;border-top:1px solid var(--line);padding-top:14px;margin-top:36px;}
+
+  /* Leads (Live) */
+  .btn{
+    background:var(--navy);
+    color:#fff;
+    border:none;
+    font-family:Verdana, Arial, sans-serif;
+    font-size:12.5px;
+    padding:8px 16px;
+    border-radius:4px;
+    cursor:pointer;
+  }
+  .btn:hover{background:#163a5a;}
+  .btn:disabled{background:#9fb0c4;cursor:not-allowed;}
+  .btn.secondary{background:#fff;color:var(--navy);border:1px solid var(--navy);}
+  .btn.secondary:hover{background:var(--alt);}
+  .search-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+  .search-row input[type=text]{
+    flex:1;
+    min-width:220px;
+    padding:8px 10px;
+    border:1px solid var(--line);
+    border-radius:4px;
+    font-family:Verdana, Arial, sans-serif;
+    font-size:13px;
+  }
+  #leadsStatus{font-size:12.5px;color:var(--grey);margin:10px 0;}
+  .table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:6px;}
+  .leads-table{border-collapse:collapse;width:100%;font-size:12px;min-width:920px;}
+  .leads-table th{background:var(--navy);color:#fff;font-size:11px;padding:8px 9px;text-align:left;position:sticky;top:0;}
+  .leads-table td{border-bottom:1px solid var(--line);padding:7px 9px;}
+  .leads-table tr:nth-child(even){background:var(--alt);}
+  .pager{display:flex;align-items:center;gap:10px;margin-top:14px;}
+  @media (max-width:800px){
+    body{flex-direction:column;}
+    nav{position:relative;width:100%;height:auto;}
+    main{padding:24px 18px 80px 18px;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand">NCCB LEAD CRM<small>Workflow · Scripts · Compliance</small></div>
+  <button class="tabbtn active" onclick="showTab('leadsLive', this)">Leads (Live)</button>
+  <button class="tabbtn" onclick="showTab('overview', this)">Overview &amp; Contents</button>
+  <button class="tabbtn" onclick="showTab('howto', this)">How to Use</button>
+  <button class="tabbtn" onclick="showTab('glossary', this)">Definitions</button>
+  <button class="tabbtn" onclick="showTab('scripts', this)">Call Scripts</button>
+  <button class="tabbtn" onclick="showTab('compliance', this)">Compliance References</button>
+</nav>
+
+<main>
+
+  <!-- OVERVIEW / TOC -->
+  <div id="overview" class="panel">
+    <h1>NCCB Lead CRM</h1>
+    <div class="subtitle">Workflow, Call Scripts &amp; Compliance Reference · July 2026</div>
+
+    <p>This tool is the shared reference for working the McGraw 90-180 day aged lead list: the live lead
+    list itself, how to search and log notes, call scripts by service line, and the compliance points that
+    matter on every call.</p>
+
+    <div class="toc">
+      <b>Contents</b>
+      <ul>
+        <li><a href="#" onclick="showTabByName('leadsLive');return false;">Leads (Live)</a> — the current lead list, 50 at a time, with search</li>
+        <li><a href="#" onclick="showTabByName('howto');return false;">How to Use</a> — search, notes, and what the automated save is for</li>
+        <li><a href="#" onclick="showTabByName('glossary');return false;">Definitions</a> — glossary of terms used across this tool</li>
+        <li><a href="#" onclick="showTabByName('scripts');return false;">Call Scripts</a> — debt management, credit repair, and credit/BK counseling scripts, including how to request contact info and socials compliantly</li>
+        <li><a href="#" onclick="showTabByName('compliance');return false;">Compliance References</a> — TCPA, Texas Finance Code Chapter 394, and CROA reference points</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- LEADS (LIVE) -->
+  <div id="leadsLive" class="panel active">
+    <h1>Leads (Live)</h1>
+    <div class="subtitle">Current lead list, 50 at a time</div>
+
+    <div class="search-row">
+      <input type="text" id="leadsSearchInput" placeholder="Search by name, phone, email, city, or Lead ID" onkeyup="if(event.key==='Enter')doSearchLeads()">
+      <button class="btn secondary" onclick="doSearchLeads()">Search</button>
+      <button class="btn secondary" onclick="clearSearch()">Clear</button>
+    </div>
+
+    <div id="leadsStatus">Loading leads…</div>
+
+    <div class="table-scroll">
+      <table class="leads-table">
+        <thead>
+          <tr>
+            <th>Lead ID</th><th>Name</th><th>Phone</th><th>Email</th><th>City, State</th>
+            <th>Status</th><th>Rep</th><th>Priority</th><th>Debt</th><th>Notes</th><th>Latest Note</th>
+          </tr>
+        </thead>
+        <tbody id="leadsTbody"></tbody>
+      </table>
+    </div>
+
+    <div class="pager">
+      <button class="btn secondary" id="prevBtn" onclick="prevPage()" disabled>&larr; Previous</button>
+      <button class="btn secondary" id="nextBtn" onclick="nextPage()" disabled>Next &rarr;</button>
+    </div>
+  </div>
+
+  <!-- HOW TO USE -->
+  <div id="howto" class="panel">
+    <h1>How to Use</h1>
+    <div class="subtitle">Day-to-day workflow inside the Leads sheet</div>
+
+    <section>
+      <div class="feature-card">
+        <h3>Search</h3>
+        <p><code class="inline">NCCB CRM &gt; Search Leads</code> opens a sidebar. Type a name, phone, email,
+        city, or Lead ID and press Enter. Click any result to jump straight to that lead's row. The filter
+        arrows already on row 1 of the Leads tab work the same way for a quick on-sheet sort or filter.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>Make a Note</h3>
+        <p>Click any cell in a lead's row, then <code class="inline">NCCB CRM &gt; Add Note to Selected Lead</code>.
+        Type the note and click OK. It's written straight to the Notes Log tab with the timestamp and your
+        email attached automatically — no need to type either yourself.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>Automated Save (why notes lock)</h3>
+        <p>The moment a note is saved, it starts moving toward being locked — permanent and uneditable, even
+        by the rep who wrote it. That's on purpose. The point of the notes log is to be a record everyone
+        can trust: the next rep who picks up a lead, or Lawrence reviewing a file, needs to see exactly what
+        was said and disclosed, in the order it happened, with nothing smoothed over or corrected after the
+        fact. That matters both for handoffs between reps and for showing, if it's ever asked, what a
+        consumer was actually told and when. Write notes the way you'd want to read them if someone else
+        picked up this lead tomorrow.</p>
+      </div>
+
+      <div class="feature-card">
+        <h3>Push an Appointment</h3>
+        <p>Click a lead's row, then <code class="inline">NCCB CRM &gt; Push Appointment to Calendar</code>.
+        Enter the date, time, and duration. It lands on your own Google Calendar and sends an invite to the
+        lead and the assigned rep automatically.</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- GLOSSARY -->
+  <div id="glossary" class="panel">
+    <h1>Definitions</h1>
+    <div class="subtitle">Terms used across the Leads sheet, scripts, and compliance references</div>
+    <dl class="glossary">
+      <dt>Lead ID</dt><dd>The unique identifier (e.g. L00001) assigned to each record on the Leads tab. Used to match notes and appointments back to the right person.</dd>
+
+      <dt>McGraw Leads</dt><dd>The lead vendor/source for this list.</dd>
+
+      <dt>90-180 Day Aged Lead</dt><dd>A lead that came in 90 to 180 days ago and has not yet converted — typically needs re-engagement rather than a first-touch pitch.</dd>
+
+      <dt>TrustedForm</dt><dd>A third-party certificate attached to a lead at the moment it was submitted online, showing that the consumer's consent to be contacted was captured. It is the paper trail behind the phone call, not a guarantee of consent for every future contact channel.</dd>
+
+      <dt>Assigned Rep</dt><dd>The team member currently responsible for working a lead. Drives the calendar invite when an appointment is pushed.</dd>
+
+      <dt>Priority</dt><dd>Auto-calculated tier (High / Medium / Standard) based on the lead's Total Debt.</dd>
+
+      <dt>Status</dt><dd>Where a lead sits in the pipeline — New, Attempted Contact, Left Voicemail, Contacted, Callback Scheduled, Qualified, Documents Sent, Enrolled, Do Not Call, or Dead Lead.</dd>
+
+      <dt>Notes Log</dt><dd>The permanent, append-only record of every note added to every lead. See "Automated Save" under How to Use.</dd>
+
+      <dt>DMP — Debt Management Plan</dt><dd>A structured repayment plan, arranged through a licensed provider, that consolidates a consumer's unsecured debts into one monthly payment, often at a reduced interest rate negotiated with creditors.</dd>
+
+      <dt>OCCC — Office of Consumer Credit Commissioner</dt><dd>The Texas state agency that licenses and regulates debt management service providers under Texas Finance Code Chapter 394.</dd>
+
+      <dt>CRO — Credit Repair Organization</dt><dd>A business that offers, for a fee, to improve a consumer's credit record or credit history. Regulated federally under the Credit Repair Organizations Act (CROA).</dd>
+
+      <dt>Credit/BK Counseling</dt><dd>Credit counseling and pre-bankruptcy financial counseling, including the credit counseling session required before a consumer can file for bankruptcy and the debtor education course required before discharge.</dd>
+
+      <dt>TCPA</dt><dd>Telephone Consumer Protection Act — the federal law governing when and how consumers can be called or texted, including permitted calling hours and consent requirements.</dd>
+
+      <dt>DNC</dt><dd>Do Not Call — both the National DNC Registry and NCCB's own internal do-not-call list. A request to stop calling must be honored on both.</dd>
+    </dl>
+  </div>
+
+  <!-- CALL SCRIPTS -->
+  <div id="scripts" class="panel">
+    <h1>Call Scripts</h1>
+    <div class="subtitle">Reference scripts by service line — adapt the wording, keep the disclosures and consent language intact</div>
+
+    <div class="consent-box">
+      <b>Standing rule, every script, every call:</b> only ask for a text number, email, or social handle
+      <i>after</i> you've stated your name and NCCB Credit, and only after the consumer has said yes. Log the
+      channel and the fact that they said yes as a note on the lead the same call — that note is your record
+      that consent was given. Never add a number or handle to a marketing list because you found it, guessed
+      it, or pulled it from a lead source. TrustedForm consent covers the original contact; it does not cover
+      texting a number the consumer didn't provide for texting, or reaching out on a social platform they
+      didn't name.
+    </div>
+
+    <div class="subtabs">
+      <button class="subtabbtn active" onclick="showSubtab('dmp', this)">Debt Management</button>
+      <button class="subtabbtn" onclick="showSubtab('repair', this)">Credit Repair</button>
+      <button class="subtabbtn" onclick="showSubtab('counsel', this)">Credit &amp; BK Counseling</button>
+    </div>
+
+    <!-- DMP SCRIPT -->
+    <div id="dmp" class="subpanel active">
+      <div class="script-block">
+        <h4>Opening</h4>
+        <p class="script-line">"Hi, is this [First Name]? This is [Rep Name] with NCCB Credit, calling about
+        the debt help request you submitted a little while back. Do you have about five minutes right now,
+        or is there a better time to talk?"</p>
+      </div>
+      <div class="script-block">
+        <h4>Discovery</h4>
+        <p class="script-line">"To see what we can put together for you, can you walk me through what you're
+        carrying right now — roughly how many accounts, and about what total? And what's driving the request
+        today — is it the interest, the number of payments, a specific creditor, or something else?"</p>
+      </div>
+      <div class="script-block">
+        <h4>Fee disclosure (say this before anything else about enrollment)</h4>
+        <p class="script-line">"Before we go further, here's exactly how this works cost-wise: there's a
+        $140.95 counseling and setup fee to build your personalized plan, a $39.95 fee for My800Scores
+        monitoring, and then $50 per account going forward. I want you to have all three numbers up front,
+        not find them later."</p>
+        <p>Always disclose all three in order, in the same call, before describing enrollment steps — quoting
+        only part of the fee sequence, or only mentioning it after describing the benefits, is the single
+        most common way this call goes wrong.</p>
+      </div>
+      <div class="script-block">
+        <h4>Requesting contact info / socials (compliant phrasing)</h4>
+        <p class="script-line">"If we get disconnected or I need to send you anything to review, is it okay
+        if I text this same number? And if a text or call doesn't reach you, what's the best way to follow up
+        — email, or do you check something like WhatsApp or Facebook Messenger more often?"</p>
+        <p>Wait for a clear yes before adding any channel. Log it: <i>"Consumer confirmed OK to text
+        [number] and reach via [channel] — verbal consent given [date/time]."</i></p>
+      </div>
+      <div class="script-block">
+        <h4>Handling urgency</h4>
+        <p class="script-line">"You mentioned [the specific pressure they named] — that's exactly the kind of
+        thing this plan is built to get ahead of, so let's not let it sit. What would it take for you to feel
+        ready to move forward today?"</p>
+        <p>If the consumer named a deadline, threat of suit, repossession, or similar urgency earlier in the
+        call, reflect it back specifically here rather than moving straight to a generic close.</p>
+      </div>
+      <div class="script-block">
+        <h4>Close</h4>
+        <p class="script-line">"Here's what happens next: I'll get your agreement over to you today, we'll
+        set up your first counseling session, and I'll go ahead and put a follow-up on the calendar for
+        [date/time] so nothing falls through the cracks — does that work for you?"</p>
+        <p>Log the note and push the calendar appointment before you hang up, not after.</p>
+      </div>
+    </div>
+
+    <!-- CREDIT REPAIR SCRIPT -->
+    <div id="repair" class="subpanel">
+      <div class="script-block">
+        <h4>Opening</h4>
+        <p class="script-line">"Hi [First Name], this is [Rep Name] with NCCB Credit. You'd reached out about
+        getting some help with your credit report — do you have a few minutes to go over what's on there?"</p>
+      </div>
+      <div class="script-block">
+        <h4>Discovery</h4>
+        <p class="script-line">"What's the credit goal driving this — are you working toward a mortgage, a
+        car, or just trying to clean things up in general? And have you pulled your reports recently, or
+        would that be a good first step?"</p>
+      </div>
+      <div class="script-block">
+        <h4>Required disclosures (CROA)</h4>
+        <p>State these plainly, before any fee is discussed:</p>
+        <ul>
+          <li>No fee is collected before the promised service is actually performed.</li>
+          <li>The consumer has the right to cancel, without penalty, until midnight of the third business
+          day after signing.</li>
+          <li>No specific results or score increase can be promised or guaranteed.</li>
+          <li>The consumer already has the right to dispute inaccurate items on their own, for free, directly
+          with the credit bureaus.</li>
+        </ul>
+        <p class="script-line">"Everything we do is in writing, you can cancel with no penalty in the first
+        three business days, and I can't promise you a specific score or that anything specific comes off —
+        what I can walk you through is the process and what's realistic."</p>
+      </div>
+      <div class="script-block">
+        <h4>Requesting contact info / socials (compliant phrasing)</h4>
+        <p class="script-line">"I'll be sending your review over in writing — is it alright if I email it to
+        this address, and text you if I need a quick answer on something? If there's a better way to reach
+        you day to day, let me know and I'll use that instead."</p>
+        <p>Log the confirmed channel(s) the same way as the debt management script.</p>
+      </div>
+      <div class="script-block">
+        <h4>Close</h4>
+        <p class="script-line">"I'll get the written agreement and the cancellation notice over to you today.
+        Take your time reading it — once you're ready to sign, we'll get your file started. I'll put a
+        check-in on the calendar for [date/time] either way."</p>
+      </div>
+    </div>
+
+    <!-- COUNSELING SCRIPT -->
+    <div id="counsel" class="subpanel">
+      <div class="script-block">
+        <h4>Opening</h4>
+        <p class="script-line">"Hi [First Name], this is [Rep Name] with NCCB Credit. I understand you're
+        looking into credit counseling — is this in connection with a bankruptcy filing, or more general
+        budget and debt counseling?"</p>
+      </div>
+      <div class="script-block">
+        <h4>Discovery</h4>
+        <p class="script-line">"Have you already spoken with an attorney about filing, or are you still
+        deciding? And has anyone mentioned the pre-filing counseling session or the post-filing debtor
+        education course to you yet?"</p>
+        <p>If they're pursuing bankruptcy, be clear this call is educational and does not replace legal
+        advice — do not answer questions about whether to file Chapter 7 vs. 13, exemptions, or timing;
+        refer those to their attorney.</p>
+      </div>
+      <div class="script-block">
+        <h4>What to explain</h4>
+        <p class="script-line">"Before a bankruptcy case can be filed, federal law requires a credit
+        counseling session from an approved agency, usually within the 180 days before filing. After the
+        case is filed, there's a second requirement — a debtor education course — before the debt can be
+        discharged. I can walk you through scheduling both."</p>
+      </div>
+      <div class="script-block">
+        <h4>Requesting contact info / socials (compliant phrasing)</h4>
+        <p class="script-line">"I'll need to send you a certificate after each session for your attorney or
+        the court — is email still the best way to get that to you, and is it okay if I text a reminder
+        before your scheduled session?"</p>
+      </div>
+      <div class="script-block">
+        <h4>Close</h4>
+        <p class="script-line">"Let's get your first session on the calendar — does [date/time] work? I'll
+        send the confirmation and make sure you have everything you need for your attorney."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPLIANCE -->
+  <div id="compliance" class="panel">
+    <h1>Compliance References</h1>
+    <div class="subtitle">Reference points only — not legal advice. Confirm anything client-facing with NCCB's compliance contact or outside counsel before relying on it.</div>
+
+    <section>
+      <h2>TCPA — Telephone Consumer Protection Act</h2>
+      <table>
+        <tr><th>Requirement</th><th>What it means on a call</th></tr>
+        <tr><td>Calling hours</td><td>Calls only between 8:00 AM and 9:00 PM in the consumer's local time zone.</td></tr>
+        <tr><td>Do Not Call lists</td><td>Check and honor both the National DNC Registry and NCCB's internal DNC list before calling; a stop request must be added to the internal list immediately.</td></tr>
+        <tr><td>Consent for texts/autodialed calls</td><td>Texting a number, or calling it with an autodialer or prerecorded message, needs the consumer's prior express consent for that specific channel — a lead's original phone consent doesn't automatically cover texting.</td></tr>
+        <tr><td>Identify yourself</td><td>State your name, that you're calling on behalf of NCCB Credit, and a callback number early in the call.</td></tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>Texas Finance Code Chapter 394 (OCCC) — Debt Management Services</h2>
+      <p>Governs NCCB's debt management licensing. Before a consumer can be enrolled in a debt management
+      plan, a certified counselor must have:</p>
+      <ul>
+        <li>Provided individualized counseling and educational information covering household finances,
+        managing credit and debt, and budgeting.</li>
+        <li>Prepared an individualized financial analysis and an initial debt management plan with specific
+        recommendations.</li>
+        <li>Determined the consumer has a reasonable ability to make the proposed payments.</li>
+      </ul>
+      <p>The agreement itself must be in writing, name the provider and consumer, list participating
+      creditors and the payment schedule, disclose permitted fees, and note that a debt management plan can
+      affect the consumer's credit.</p>
+    </section>
+
+    <section>
+      <h2>CROA — Credit Repair Organizations Act</h2>
+      <ul>
+        <li>No fee may be collected before the promised service is actually performed — no advance/upfront fees.</li>
+        <li>A written contract is required, describing the services, total cost, and timeframe.</li>
+        <li>The consumer must receive a written notice of the right to cancel, without penalty, until
+        midnight of the third business day after signing.</li>
+        <li>No guarantee of a specific result (score increase, deletion of a specific item) may be made.</li>
+        <li>The consumer must be told, in writing, that they can dispute inaccurate credit report items
+        directly and for free, and that free credit counseling alternatives exist.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Bankruptcy Counseling Requirements</h2>
+      <p>Federal law requires an approved credit counseling session before a bankruptcy case can be filed
+      (generally within the 180 days before filing), and a separate debtor education course after filing and
+      before discharge. This call is educational only — questions about whether or when to file, or which
+      chapter to file under, should be referred to the consumer's attorney.</p>
+    </section>
+
+    <div class="legal-note">
+      These are reference summaries of publicly available regulatory material, not a compliance manual and
+      not legal advice. Requirements change and vary by exact fact pattern — verify current language and
+      applicability with NCCB's compliance contact or legal counsel before using any of this in a client-facing
+      context.
+    </div>
+  </div>
+
+  <footer>NCCB Lead CRM — Workflow, Call Scripts &amp; Compliance Reference — July 2026</footer>
+</main>
+
+<script>
+function showTab(id, btn){
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.tabbtn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  window.scrollTo(0,0);
+}
+function showTabByName(id){
+  var btns = document.querySelectorAll('.tabbtn');
+  for (var i=0;i<btns.length;i++){
+    if (btns[i].getAttribute('onclick').indexOf("'"+id+"'") !== -1){ showTab(id, btns[i]); return; }
+  }
+}
+function showSubtab(id, btn){
+  document.querySelectorAll('.subpanel').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.subtabbtn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+}
+
+/* ---- Leads (Live) ---- */
+var LEADS_DATA_URL = 'https://script.google.com/macros/s/AKfycbzU-51CGzrEEuP_RvonyIco4t0qdVwKN7Ho3YCsYgG8hYwb6mofCGb47VVDjEXuA2-Irw/exec';
+var currentPage = 1;
+var currentQuery = '';
+
+function doSearchLeads(){
+  currentQuery = document.getElementById('leadsSearchInput').value.trim();
+  loadLeads(1, currentQuery);
+}
+
+function clearSearch(){
+  currentQuery = '';
+  document.getElementById('leadsSearchInput').value = '';
+  loadLeads(1, '');
+}
+
+function prevPage(){ if (currentPage > 1) loadLeads(currentPage - 1, currentQuery); }
+function nextPage(){ loadLeads(currentPage + 1, currentQuery); }
+
+function loadLeads(page, query){
+  document.getElementById('leadsStatus').textContent = 'Loading leads…';
+  document.getElementById('prevBtn').disabled = true;
+  document.getElementById('nextBtn').disabled = true;
+  var sep = LEADS_DATA_URL.indexOf('?') === -1 ? '?' : '&';
+  var url = LEADS_DATA_URL + sep + 'page=' + encodeURIComponent(page) + (query ? '&q=' + encodeURIComponent(query) : '');
+  fetch(url)
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      currentPage = data.page;
+      currentQuery = query;
+      renderLeadsTable(data);
+    })
+    .catch(function(err){
+      document.getElementById('leadsStatus').textContent =
+        "Couldn't load the lead list right now. Try refreshing the page in a moment.";
+    });
+}
+
+function renderLeadsTable(data){
+  var tbody = document.getElementById('leadsTbody');
+  tbody.innerHTML = '';
+  data.leads.forEach(function(l){
+    var tr = document.createElement('tr');
+    var values = [
+      l.leadId, (l.firstName + ' ' + l.lastName), l.phone, l.email, (l.city + ', ' + l.state),
+      l.status, l.assignedRep, l.priority,
+      '$' + Number(l.totalDebt || 0).toLocaleString(),
+      String(l.numNotes || 0), (l.latestNote || '')
+    ];
+    values.forEach(function(v){
+      var td = document.createElement('td');
+      td.textContent = v;
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  var statusText = 'Page ' + data.page + ' of ' + data.totalPages + ' \u00b7 ' + data.totalLeads + ' total leads';
+  if (data.query) statusText += ' matching "' + data.query + '"';
+  document.getElementById('leadsStatus').textContent = statusText;
+  document.getElementById('prevBtn').disabled = data.page <= 1;
+  document.getElementById('nextBtn').disabled = data.page >= data.totalPages;
+}
+
+document.addEventListener('DOMContentLoaded', function(){ loadLeads(1, ''); });
+</script>
+
+</body>
+</html>
