@@ -392,6 +392,16 @@
   .report-row label{font-size:11px;color:var(--grey);margin-bottom:5px;}
   .report-row select{padding:8px 10px;border:1px solid var(--line);border-radius:4px;font-family:Verdana,Arial,sans-serif;font-size:13px;}
   #reportMsg{font-size:12px;margin-top:10px;min-height:16px;}
+  .medal-cards{display:grid;grid-template-columns:repeat(3, 1fr);gap:14px;margin:16px 0 22px 0;}
+  .medal-card{background:#fff;border-radius:8px;padding:18px 16px;text-align:center;border:2px solid var(--line);}
+  .medal-card.gold{border-color:#D4AF37;background:linear-gradient(180deg,#FFF9E6,#fff);}
+  .medal-card.silver{border-color:#A8A8A8;background:linear-gradient(180deg,#F5F5F5,#fff);}
+  .medal-card.bronze{border-color:#B87333;background:linear-gradient(180deg,#FBEEE3,#fff);}
+  .medal-rank{font-size:26px;margin-bottom:6px;}
+  .medal-name{font-size:14px;font-weight:bold;color:var(--navy);margin-bottom:4px;}
+  .medal-value{font-size:22px;font-weight:bold;color:var(--ink);}
+  .medal-empty{color:var(--grey);font-size:12px;padding:20px;}
+  .standing-table td.you-row{background:#EEF2FA;font-weight:bold;}
   .admin-section{background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px 20px;margin-bottom:22px;}
   .admin-section h3{margin:0 0 14px 0;color:var(--navy);font-size:14px;}
   .assign-table{border-collapse:collapse;width:100%;font-size:12.5px;}
@@ -938,7 +948,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
   <!-- LEADS (LIVE) -->
   <div id="leadsLive" class="panel active">
     <h1>Leads (Live)</h1>
-    <div class="version-tag">v2.8 — July 29, 2026 5:20 PM LH</div>
+    <div class="version-tag">v2.9 — July 29, 2026 7:30 PM LH</div>
     <div class="subtitle">Current lead list, 50 at a time</div>
 
     <div class="clock-card" id="clockCard">
@@ -1653,6 +1663,8 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
     <div class="subtabs">
       <button class="subtabbtn active" onclick="showKpiSubtab('myDashboard', this)">My Dashboard</button>
       <button class="subtabbtn" onclick="showKpiSubtab('teamKpis', this)">Team KPIs</button>
+      <button class="subtabbtn" onclick="showKpiSubtab('weeklyBreakdown', this)">Weekly Breakdown</button>
+      <button class="subtabbtn" onclick="showKpiSubtab('rankings', this)">Rankings</button>
     </div>
 
     <!-- MY DASHBOARD -->
@@ -1814,6 +1826,85 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
       </div>
     </div>
 
+    <!-- WEEKLY BREAKDOWN (Monday - Saturday) -->
+    <div id="weeklyBreakdown" class="subpanel">
+      <div class="kpi-controls">
+        <div class="kpi-rep-picker">
+          <label>Viewing</label>
+          <select id="weeklyRepSelect" onchange="loadWeeklyBreakdown()">
+            <option value="ALL">Team Total (All Reps)</option>
+          </select>
+        </div>
+      </div>
+      <div class="kpi-charts">
+        <div class="kpi-chart-card wide">
+          <h3>Calls, Closures &amp; Appointments Set — Monday Through Saturday</h3>
+          <canvas id="weeklyBreakdownChart"></canvas>
+        </div>
+      </div>
+      <div class="table-scroll">
+        <table class="kpi-table" id="weeklyBreakdownTable"></table>
+      </div>
+      <div class="kpi-note">A real day-by-day view of the current week, Monday through Saturday — not a
+      cumulative running total like Week-to-Date on the other tabs.</div>
+    </div>
+
+    <!-- RANKINGS -->
+    <div id="rankings" class="subpanel">
+      <div class="kpi-controls">
+        <div class="kpi-rep-picker">
+          <label>Period</label>
+          <select id="rankingsPeriod" onchange="loadRankings()">
+            <option value="day">Today</option>
+            <option value="week">Week-to-Date</option>
+            <option value="month">Month-to-Date</option>
+            <option value="quarter">Quarter-to-Date</option>
+            <option value="year">Year-to-Date</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <h3>Your Standing (Individual Ranking)</h3>
+        <div class="table-scroll">
+          <table class="kpi-table standing-table" id="individualStandingTable"></table>
+        </div>
+        <div class="kpi-note">Your row is highlighted. Rank is out of all active reps with any activity in the selected period.</div>
+      </div>
+
+      <div class="admin-section">
+        <h3>Team Rankings — Top 3 (Team Ranking)</h3>
+        <div class="report-row" style="margin-bottom:16px;">
+          <div>
+            <label>Metric</label>
+            <select id="rankingsMetric" onchange="loadRankings()">
+              <option value="calls">Calls</option>
+              <option value="texts">Texts</option>
+              <option value="emails">Emails</option>
+              <option value="conversations">Conversations</option>
+              <option value="applications">Applications</option>
+              <option value="closures">Closures</option>
+              <option value="appointmentsSet">Appointments Set</option>
+              <option value="my800Sales">My800Scores Sales</option>
+              <option value="creditCounselingSales">Credit Counseling Sales</option>
+              <option value="creditRestorationSales">Credit Restoration Sales</option>
+              <option value="debtSettlementSales">Debt Settlement Sales</option>
+              <option value="debtManagementSales">Debt Management Sales</option>
+              <option value="bkCounselingSales">BK Counseling Sales</option>
+              <option value="totalSales">Total Sales (All Services)</option>
+            </select>
+          </div>
+        </div>
+        <div id="medalCardsContainer" class="medal-cards"></div>
+        <div class="kpi-charts">
+          <div class="kpi-chart-card wide">
+            <h3>Full Ranking — Selected Metric</h3>
+            <canvas id="rankingsChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="report-section">
       <h2 style="color:var(--navy);font-size:17px;border-bottom:2px solid var(--ltblue);padding-bottom:8px;margin-bottom:16px;">Create Report</h2>
       <div class="report-form">
@@ -1829,6 +1920,7 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var n,r,i,a,
               <option value="bkCounselingSales">BK Counseling Sales</option>
               <option value="closures">Total Closures (All Services)</option>
               <option value="calls">Call Production</option>
+              <option value="appointmentsSet">Appointments Set</option>
             </select>
           </div>
           <div>
@@ -2367,6 +2459,8 @@ function doLogout(){
 /* ---- KPI Dashboard ---- */
 var kpiInitialized = false;
 var teamRepInitialized = false;
+var weeklyBreakdownInitialized = false;
+var rankingsInitialized = false;
 var clockTimerInterval = null;
 var teamViewRep = 'ALL';
 
@@ -2379,7 +2473,7 @@ function initKpiTab(){
 }
 
 function showKpiSubtab(id, btn){
-  ['myDashboard', 'teamKpis'].forEach(function(pid){
+  ['myDashboard', 'teamKpis', 'weeklyBreakdown', 'rankings'].forEach(function(pid){
     document.getElementById(pid).classList.remove('active');
   });
   document.getElementById(id).classList.add('active');
@@ -2398,6 +2492,26 @@ function showKpiSubtab(id, btn){
       });
     });
     loadTeamKpis();
+  }
+
+  if (id === 'weeklyBreakdown' && !weeklyBreakdownInitialized){
+    weeklyBreakdownInitialized = true;
+    fetchReps().then(function(reps){
+      var sel = document.getElementById('weeklyRepSelect');
+      reps.forEach(function(r){
+        var opt = document.createElement('option');
+        opt.value = r.name;
+        opt.textContent = r.name;
+        sel.appendChild(opt);
+      });
+      sel.value = currentRepName || 'ALL';
+      loadWeeklyBreakdown();
+    });
+  }
+
+  if (id === 'rankings' && !rankingsInitialized){
+    rankingsInitialized = true;
+    loadRankings();
   }
 }
 
@@ -2433,6 +2547,7 @@ var BY_REP_COLUMNS = [
   { key: 'conversations', label: 'Conversations' },
   { key: 'applications', label: 'Applications' },
   { key: 'closures', label: 'Closures' },
+  { key: 'appointmentsSet', label: 'Appointments Set' },
   { key: 'my800Sales', label: 'My800' },
   { key: 'creditCounselingSales', label: 'Credit Counseling' },
   { key: 'creditRestorationSales', label: 'Credit Restoration' },
@@ -2448,6 +2563,136 @@ function renderTeamByRepTable(reps){
     return '<tr><td>' + esc_(r.name) + '</td>' + cells + '</tr>';
   }).join('');
   document.getElementById('teamByRepTable').innerHTML = thead + (rows || '<tr><td colspan="11">No reps on file.</td></tr>');
+}
+
+/* ---- Weekly Breakdown (Monday - Saturday, real day-by-day, not cumulative) ---- */
+function loadWeeklyBreakdown(){
+  var rep = document.getElementById('weeklyRepSelect').value || 'ALL';
+  var sep = LEADS_DATA_URL.indexOf('?') === -1 ? '?' : '&';
+  fetch(LEADS_DATA_URL + sep + 'action=productionByDay&rep=' + encodeURIComponent(rep))
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (data.ok) renderWeeklyBreakdown(data.days);
+    });
+}
+
+function renderWeeklyBreakdown(days){
+  var thead = '<tr><th>Day</th><th>Calls</th><th>Conversations</th><th>Applications</th><th>Closures</th>' +
+    '<th>Appointments Set</th><th>Total Sales</th></tr>';
+  var rows = days.map(function(d){
+    var t = d.totals;
+    var totalSales = (t.my800Sales||0) + (t.creditCounselingSales||0) + (t.creditRestorationSales||0) +
+      (t.debtSettlementSales||0) + (t.debtManagementSales||0) + (t.bkCounselingSales||0);
+    return '<tr><td>' + esc_(d.day) + '</td><td>' + t.calls + '</td><td>' + t.conversations + '</td>' +
+      '<td>' + t.applications + '</td><td>' + t.closures + '</td><td>' + t.appointmentsSet + '</td>' +
+      '<td>' + totalSales + '</td></tr>';
+  }).join('');
+  document.getElementById('weeklyBreakdownTable').innerHTML = thead + rows;
+
+  if (typeof Chart === 'undefined') return;
+  var labels = days.map(function(d){ return d.day; });
+  if (weeklyChartInstance) weeklyChartInstance.destroy();
+  weeklyChartInstance = new Chart(document.getElementById('weeklyBreakdownChart'), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'Calls', data: days.map(function(d){ return d.totals.calls; }), backgroundColor: '#1F4E79' },
+        { label: 'Closures', data: days.map(function(d){ return d.totals.closures; }), backgroundColor: '#2E7D32' },
+        { label: 'Appointments Set', data: days.map(function(d){ return d.totals.appointmentsSet; }), backgroundColor: '#F0AD4E' }
+      ]
+    },
+    options: { plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true } } }
+  });
+}
+var weeklyChartInstance = null;
+
+/* ---- Rankings: Individual Standing + Team Top-3 ---- */
+var RANKING_METRICS = [
+  { key: 'calls', label: 'Calls' },
+  { key: 'texts', label: 'Texts' },
+  { key: 'emails', label: 'Emails' },
+  { key: 'conversations', label: 'Conversations' },
+  { key: 'applications', label: 'Applications' },
+  { key: 'closures', label: 'Closures' },
+  { key: 'appointmentsSet', label: 'Appointments Set' },
+  { key: 'my800Sales', label: 'My800Scores Sales' },
+  { key: 'creditCounselingSales', label: 'Credit Counseling Sales' },
+  { key: 'creditRestorationSales', label: 'Credit Restoration Sales' },
+  { key: 'debtSettlementSales', label: 'Debt Settlement Sales' },
+  { key: 'debtManagementSales', label: 'Debt Management Sales' },
+  { key: 'bkCounselingSales', label: 'BK Counseling Sales' },
+  { key: 'totalSales', label: 'Total Sales (All Services)' }
+];
+
+function metricValue(totals, key){
+  if (key === 'totalSales'){
+    return (totals.my800Sales||0) + (totals.creditCounselingSales||0) + (totals.creditRestorationSales||0) +
+      (totals.debtSettlementSales||0) + (totals.debtManagementSales||0) + (totals.bkCounselingSales||0);
+  }
+  return totals[key] || 0;
+}
+
+function loadRankings(){
+  var period = document.getElementById('rankingsPeriod').value;
+  var sep = LEADS_DATA_URL.indexOf('?') === -1 ? '?' : '&';
+  fetch(LEADS_DATA_URL + sep + 'action=productionByRep&period=' + encodeURIComponent(period))
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (!data.ok) return;
+      renderIndividualStanding(data.reps);
+      renderTeamRankings(data.reps);
+    });
+}
+
+function renderIndividualStanding(reps){
+  var thead = '<tr><th>Metric</th><th>Your Number</th><th>Your Rank</th><th>Leader\u2019s Number</th></tr>';
+  var rowsHtml = RANKING_METRICS.map(function(m){
+    var sorted = reps.slice().sort(function(a, b){ return metricValue(b.totals, m.key) - metricValue(a.totals, m.key); });
+    var yourIndex = sorted.findIndex(function(r){ return r.name === currentRepName; });
+    var yourValue = yourIndex !== -1 ? metricValue(sorted[yourIndex].totals, m.key) : 0;
+    var yourRank = yourIndex !== -1 ? (yourIndex + 1) + ' of ' + sorted.length : '—';
+    var leaderValue = sorted.length ? metricValue(sorted[0].totals, m.key) : 0;
+    var rowClass = yourIndex !== -1 ? ' class="you-row"' : '';
+    return '<tr' + rowClass + '><td>' + esc_(m.label) + '</td><td>' + yourValue + '</td><td>' + yourRank + '</td><td>' + leaderValue + '</td></tr>';
+  }).join('');
+  document.getElementById('individualStandingTable').innerHTML = thead + rowsHtml;
+}
+
+var rankingsChartInstance = null;
+
+function renderTeamRankings(reps){
+  var metricKey = document.getElementById('rankingsMetric').value;
+  var metricLabel = (RANKING_METRICS.find(function(m){ return m.key === metricKey; }) || {}).label || metricKey;
+  var sorted = reps.slice().sort(function(a, b){ return metricValue(b.totals, metricKey) - metricValue(a.totals, metricKey); });
+
+  var medalClasses = ['gold', 'silver', 'bronze'];
+  var medalIcons = ['\uD83E\uDD47', '\uD83E\uDD48', '\uD83E\uDD49'];
+  var cardsHtml = '';
+  for (var i = 0; i < 3; i++){
+    if (sorted[i]){
+      cardsHtml += '<div class="medal-card ' + medalClasses[i] + '">' +
+        '<div class="medal-rank">' + medalIcons[i] + '</div>' +
+        '<div class="medal-name">' + esc_(sorted[i].name) + '</div>' +
+        '<div class="medal-value">' + metricValue(sorted[i].totals, metricKey) + '</div>' +
+        '</div>';
+    } else {
+      cardsHtml += '<div class="medal-card ' + medalClasses[i] + '"><div class="medal-empty">No rep yet</div></div>';
+    }
+  }
+  document.getElementById('medalCardsContainer').innerHTML = cardsHtml;
+
+  if (typeof Chart === 'undefined') return;
+  var labels = sorted.map(function(r){ return r.name; });
+  var values = sorted.map(function(r){ return metricValue(r.totals, metricKey); });
+  var colors = sorted.map(function(r, i){ return i === 0 ? '#D4AF37' : i === 1 ? '#A8A8A8' : i === 2 ? '#B87333' : '#B8C9DE'; });
+
+  if (rankingsChartInstance) rankingsChartInstance.destroy();
+  rankingsChartInstance = new Chart(document.getElementById('rankingsChart'), {
+    type: 'bar',
+    data: { labels: labels, datasets: [{ label: metricLabel, data: values, backgroundColor: colors }] },
+    options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } }
+  });
 }
 
 function loadKpiTable(repParam, prefix){
@@ -2547,6 +2792,7 @@ var PRODUCTION_ROWS = [
   { label: 'Conversations', calc: function(p){ return p.conversations; } },
   { label: 'Applications', calc: function(p){ return p.applications; } },
   { label: 'Closures', calc: function(p){ return p.closures; } },
+  { label: 'Appointments Set', calc: function(p){ return p.appointmentsSet || 0; } },
   { label: 'Contact Rate', calc: function(p){ return p.calls ? Math.round((p.conversations / p.calls) * 100) + '%' : '—'; } },
   { label: 'Application Rate', calc: function(p){ return p.conversations ? Math.round((p.applications / p.conversations) * 100) + '%' : '—'; } },
   { label: 'Close Rate', calc: function(p){ return p.applications ? Math.round((p.closures / p.applications) * 100) + '%' : '—'; } },
@@ -2771,7 +3017,8 @@ var REPORT_TYPE_LABELS = {
   debtManagementSales: 'Debt Management Sales',
   bkCounselingSales: 'BK Counseling Sales',
   closures: 'Total Closures (All Services)',
-  calls: 'Call Production'
+  calls: 'Call Production',
+  appointmentsSet: 'Appointments Set'
 };
 var REPORT_PERIOD_LABELS = { day: 'Today', week: 'Week-to-Date', month: 'Month-to-Date', quarter: 'Quarter-to-Date', year: 'Year-to-Date' };
 
